@@ -14,6 +14,7 @@ function getJSON_Meetup(){
 		qs: {
 			key: '10467d721e56765f56726e64326a5331',
 			text: 'data',
+			start_date_range: '2018-06-08T00:00:00',
 			end_date_range: '2018-06-30T00:00:00',
 			radius: '100',
 			lon: '-122.42',
@@ -39,6 +40,7 @@ function getJSON_Eventbrite(){
 		qs: {
 			token: 'TD4KJTXK4VUCSJNXQ3X2',
 			q: 'data',
+			'start_date.range_start': '2018-06-08T00:00:00',
 			'start_date.range_end': '2018-06-30T00:00:00',
 			'location.within': '100km',
 			'location.longitude': '-122.42',
@@ -51,7 +53,7 @@ function getJSON_Eventbrite(){
 	var eventbrite_request = request('GET', 'https://www.eventbriteapi.com/v3/events/search/', eventbrite);
 	var response = JSON.parse(eventbrite_request.getBody('utf8'));
 	var page_count = response.pagination.page_count;
-	var all_pages = [], temp = [];
+	var all_pages = [];
 
 	//Удаляем старый файл, если он сущестует
 	if (fs.existsSync('json/eventbrite.json')) {
@@ -63,8 +65,7 @@ function getJSON_Eventbrite(){
 		eventbrite_request = request('GET', 'https://www.eventbriteapi.com/v3/events/search/', eventbrite);
 		response = JSON.parse(eventbrite_request.getBody('utf8'));
 
-		all_pages = temp.concat(response.events);
-		temp = all_pages;
+		all_pages = all_pages.concat(response.events);
 		console.log('Eventbrite. Загружена страница ' + eventbrite.qs.page + '/' + page_count + '. ' + all_pages.length + ' событий найдено.');
 	}
 	fs.appendFileSync('json/eventbrite.json', JSON.stringify(all_pages, '', 4));
